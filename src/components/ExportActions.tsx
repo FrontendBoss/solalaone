@@ -23,6 +23,7 @@ export default function ExportActions({ proposalData, proposalType }: ExportActi
   const [showPreviewForm, setShowPreviewForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [clientInfo, setClientInfo] = useState({
     name: '',
     email: '',
@@ -30,9 +31,13 @@ export default function ExportActions({ proposalData, proposalType }: ExportActi
   });
 
   const handleSaveProposal = async () => {
-    if (!user || !installer || !clientInfo.name) return;
+    if (!user || !installer || !clientInfo.name) {
+      setSaveError('Please enter client name');
+      return;
+    }
 
     setSaving(true);
+    setSaveError(null);
     try {
       await saveProposal(
         user.id,
@@ -48,11 +53,13 @@ export default function ExportActions({ proposalData, proposalType }: ExportActi
       setTimeout(() => {
         setShowSaveModal(false);
         setSaveSuccess(false);
+        setSaveError(null);
         setClientInfo({ name: '', email: '', phone: '' });
       }, 2000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving proposal:', error);
-      alert('Failed to save proposal. Please try again.');
+      const errorMessage = error?.message || 'Failed to save proposal. Please try again.';
+      setSaveError(errorMessage);
     } finally {
       setSaving(false);
     }
@@ -172,6 +179,11 @@ export default function ExportActions({ proposalData, proposalType }: ExportActi
             ) : (
               <>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Save Proposal</h3>
+                {saveError && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+                    {saveError}
+                  </div>
+                )}
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -213,7 +225,10 @@ export default function ExportActions({ proposalData, proposalType }: ExportActi
                 </div>
                 <div className="flex gap-2 mt-6">
                   <button
-                    onClick={() => setShowSaveModal(false)}
+                    onClick={() => {
+                      setShowSaveModal(false);
+                      setSaveError(null);
+                    }}
                     className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
                     disabled={saving}
                   >
