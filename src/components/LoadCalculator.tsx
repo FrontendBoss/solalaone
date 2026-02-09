@@ -215,14 +215,17 @@ export default function LoadCalculator({ loadedProposal, state, setState }: Load
   }, [loadedProposal]);
 
   const handleRecalculate = () => {
-    if (!lockedFields.systemSize) {
+    if (lockedFields.systemSize && !lockedFields.numberOfPanels) {
+      const calculatedPanels = Math.ceil((systemSize * 1000) / panelCapacity);
+      setNumberOfPanels(calculatedPanels);
+    } else if (!lockedFields.systemSize && (lockedFields.numberOfPanels || lockedFields.panelCapacity)) {
       const calculatedSize = (numberOfPanels * panelCapacity) / 1000;
       setSystemSize(calculatedSize);
-    }
-    if (!lockedFields.numberOfPanels && !lockedFields.panelCapacity && !lockedFields.systemSize) {
+    } else if (!lockedFields.systemSize && !lockedFields.numberOfPanels) {
       const calculatedPanels = Math.ceil((systemSize * 1000) / panelCapacity);
       setNumberOfPanels(calculatedPanels);
     }
+    fetchAIRecommendations();
   };
 
   const handleAutoAdjustSystem = () => {
@@ -237,6 +240,7 @@ export default function LoadCalculator({ loadedProposal, state, setState }: Load
     if (!lockedFields.systemSize) {
       setSystemSize(recommendedSystemSize);
     }
+    fetchAIRecommendations();
   };
 
   const LoadCategorySection = ({
@@ -528,16 +532,30 @@ export default function LoadCalculator({ loadedProposal, state, setState }: Load
             </div>
 
             <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
-              <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-                <Info className="text-purple-600" />
-                AI Recommendations
-              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                  <Info className="text-purple-600" />
+                  AI Recommendations
+                </h3>
+                <button
+                  onClick={fetchAIRecommendations}
+                  disabled={loadingAI}
+                  className="flex items-center gap-2 px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm disabled:bg-gray-400"
+                >
+                  <RefreshCw size={14} className={loadingAI ? 'animate-spin' : ''} />
+                  {loadingAI ? 'Loading...' : 'Get Recommendations'}
+                </button>
+              </div>
               {loadingAI ? (
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="animate-spin text-blue-600" size={32} />
                 </div>
-              ) : (
+              ) : aiRecommendation ? (
                 <div className="text-sm text-gray-700 whitespace-pre-line">{aiRecommendation}</div>
+              ) : (
+                <div className="text-sm text-gray-500 text-center py-4">
+                  Click "Get Recommendations" to receive AI-powered system recommendations based on your current configuration.
+                </div>
               )}
             </div>
 
