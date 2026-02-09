@@ -1,6 +1,6 @@
 # SolalaSolar
 
-A comprehensive solar installation planning and proposal generation application. SolarScope helps solar professionals analyze properties, design solar systems, calculate costs, and generate professional proposals for clients.
+A comprehensive solar installation planning and proposal generation application. SolalaSolar helps solar professionals analyze properties, design solar systems, calculate costs, and generate professional proposals for clients.
 
 ## Features
 
