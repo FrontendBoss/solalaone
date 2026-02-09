@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media print {
+  @page {
+    margin: 0.5in;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl {
+    box-shadow: none !important;
+  }
+
+  button,
+  input[type="button"],
+  .no-print-button {
+    display: none !important;
+  }
+
+  input:not([type="button"]):not([type="submit"]) {
+    border: 1px solid #e5e7eb !important;
+  }
+
+  .print-show-border {
+    border: 1px solid #e5e7eb !important;
+  }
+
+  .bg-gray-50,
+  .bg-white {
+    page-break-inside: avoid;
+  }
+}
+
+.print-only {
+  display: none;
+}
