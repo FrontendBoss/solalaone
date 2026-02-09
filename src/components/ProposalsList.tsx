@@ -12,15 +12,21 @@ export default function ProposalsList({ onLoadProposal }: ProposalsListProps) {
   const { user } = useAuth();
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const loadProposals = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     try {
+      setError(null);
       const data = await getProposals(user.id);
       setProposals(data);
     } catch (error) {
       console.error('Error loading proposals:', error);
+      setError('Failed to load proposals. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -28,7 +34,7 @@ export default function ProposalsList({ onLoadProposal }: ProposalsListProps) {
 
   useEffect(() => {
     loadProposals();
-  }, [user]);
+  }, [user?.id]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this proposal?')) return;
@@ -57,8 +63,12 @@ export default function ProposalsList({ onLoadProposal }: ProposalsListProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -70,6 +80,18 @@ export default function ProposalsList({ onLoadProposal }: ProposalsListProps) {
           <h2 className="text-2xl font-bold text-gray-900">Saved Proposals</h2>
           <span className="text-sm text-gray-600">{proposals.length} proposals</span>
         </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+            <p>{error}</p>
+            <button
+              onClick={loadProposals}
+              className="mt-2 text-sm underline hover:no-underline"
+            >
+              Try again
+            </button>
+          </div>
+        )}
 
         {proposals.length === 0 ? (
           <div className="text-center py-12">
