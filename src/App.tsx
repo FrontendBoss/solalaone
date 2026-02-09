@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { Calculator, DollarSign, TrendingUp, Sun, LogOut, FileText, Settings as SettingsIcon, Presentation, Home } from 'lucide-react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Calculator, DollarSign, TrendingUp, Sun, LogOut, FileText, Settings as SettingsIcon, Presentation, Home, CreditCard } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import Auth from './components/Auth';
 import LoadCalculator from './components/LoadCalculator';
@@ -144,7 +144,10 @@ function App() {
 
   ];
 
-  const DashboardContent = () => (
+  const DashboardContent = () => {
+    const navigate = useNavigate();
+
+    return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="print-only bg-white border-b-2 border-gray-800 mb-6">
         <div className="max-w-7xl mx-auto px-4 py-6">
@@ -190,12 +193,20 @@ function App() {
                 <div className="text-gray-600">{installer.full_name}</div>
               </div>
               <button
-                onClick={() => setShowHomePage(true)}
+                onClick={() => navigate('/')}
                 className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
                 title="Home"
               >
                 <Home size={18} />
                 <span className="hidden sm:inline">Home</span>
+              </button>
+              <button
+                onClick={() => navigate('/pricing')}
+                className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                title="Pricing"
+              >
+                <CreditCard size={18} />
+                <span className="hidden sm:inline">Pricing</span>
               </button>
               <button
                 onClick={() => setShowSettings(true)}
@@ -283,7 +294,8 @@ function App() {
 
       {showSettings && <Settings onClose={() => setShowSettings(false)} />}
     </div>
-  );
+    );
+  };
 
   return (
     <Routes>
