@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Sun, LogIn, UserPlus, Loader2 } from 'lucide-react';
 
 export default function Auth() {
+  const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -26,6 +28,7 @@ export default function Auth() {
       } else {
         await signIn(formData.email, formData.password);
       }
+       setTimeout(() => navigate('/dashboard'), 1000);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     } finally {
